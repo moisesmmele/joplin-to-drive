@@ -1,27 +1,33 @@
 #!/bin/bash
 
-echo "This script must run on a machine with a Graphical User Interface."
+#JOPLIN EXPORT AND SYNC HELPER TOOL v1.1
 
-# 1. Check/Install Rclone
-if ! command -v rclone &> /dev/null; then
-    echo "Rclone not found. Installing..."
-    # Note: This requires sudo/root on Linux/Mac
-    curl https://rclone.org/install.sh | sudo bash
-else
-    echo "Rclone is already installed."
-fi
+# Define where you want the config file
+CONFIG_DIR="./config"
+CONFIG_FILE="$CONFIG_DIR/rclone.conf"
+mkdir -p "$CONFIG_DIR"
 
-# 2. Authorize and Capture
-echo "Opening browser for Google Drive authentication..."
-echo "Please log in."
+echo ">>> This script requires Rclone installed on your local machine."
+echo ">>> Initiating Google Drive Auth..."
 
-# 'drive' is the rclone internal name for Google Drive
-# This command captures the JSON token string
+# Get the JSON token
 TOKEN_JSON=$(rclone authorize "drive" | tail -n 1)
 
-# 3. Format output for the user
-echo "------------------------------------------------"
-echo "SUCCESS! Copy the line below into your .env file:"
-echo ""
-echo "RCLONE_AUTH_TOKEN='$TOKEN_JSON'"
-echo "------------------------------------------------"
+# Check if we got a valid JSON (basic check)
+if [[ "$TOKEN_JSON" != *"access_token"* ]]; then
+    echo "Error: Failed to retrieve token. Output: $TOKEN_JSON"
+    exit 1
+fi
+
+echo ">>> Authentication successful."
+echo ">>> Writing config to $CONFIG_FILE"
+
+# Write a clean rclone.conf file
+cat > "$CONFIG_FILE" <<EOF
+[gdrive]
+type = drive
+scope = drive
+token = $TOKEN_JSON
+EOF
+
+echo ">>> Done! You can now run 'docker-compose up -d'"
