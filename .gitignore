@@ -1,0 +1,24 @@
+# --- Secrets & Configuration ---
+.env
+config/rclone.conf
+
+# --- Data & Exports ---
+# Ignore the local export folder if you ever mount it for debugging
+export/
+# Ignore local data directories if you switch from named volumes to bind mounts
+data/
+joplin-data/
+
+# --- Logs & Locks ---
+*.log
+*.lock
+tmp/
+
+# --- OS & IDE Metadata ---
+.DS_Store
+.idea/
+.vscode/
+
+# --- Node/Docker Garbage ---
+node_modules/
+npm-debug.log

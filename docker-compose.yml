@@ -19,12 +19,8 @@ services:
       # Persist Joplin's local database so we don't re-download everything every time
       - joplin_data:/home/appuser/.config/joplin
 
-    environment:
-      - JOPLIN_SERVER_URL=${JOPLIN_SERVER_URL}
-      - JOPLIN_SERVER_EMAIL=${JOPLIN_SERVER_EMAIL}
-      - JOPLIN_SERVER_PASSWORD=${JOPLIN_SERVER_PASSWORD}
-      - RCLONE_REMOTE_NAME=gdrive
-      - RCLONE_DEST_PATH=JoplinNotes
+    env_file:
+      - .env
 
 volumes:
   joplin_data:
