@@ -1,9 +1,6 @@
 FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
-# add user
-RUN useradd -d 1000 -m -s /bin/bash appuser
-
 # Install dependencies
 RUN apt-get update && \
 	apt-get install -y \
@@ -12,7 +9,6 @@ RUN apt-get update && \
 	unzip \
 	cron \
 	ca-certificates\
-	nano \
 	nodejs \
 	npm \
 	rclone && \
@@ -22,6 +18,9 @@ RUN apt-get update && \
 # Install joplin CLI globally
 RUN npm install -g joplin --unsafe-perm=true --allow-root
 
+# add user
+RUN useradd -d 1000 -m -s /bin/bash appuser
+
 # Setup directories
 RUN \	
 	# create directories
@@ -30,25 +29,11 @@ RUN \
 	chown -R appuser:appuser /config /export /scripts /var/log && \
 	
 
-# copy scripts
-COPY joplin-cron /etc/cron.d/joplin-cron
-COPY joplin-export.sh /scripts/joplin-export.sh
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
 
+# Make entrypoint executable
+RUN chmod +x /entrypoint.sh
 
-# set permissions, ownership and symlinks
-RUN \
-	# set execution policy
-	chmod +x /scripts/joplin-export.sh && \
-	chmod 0644 /etc/cron.d/joplin-cron && \
-
-
-	# Symlink configfiles to expected path
-	mkdir -p /root/.config && \
-	ln -s /config/joplin /root/.config/joplin && \
-	mkdir -p /root/.config/rclone && \
-	ln -s /config/rclone/rclone.conf /root/.config/rclone/rclone.conf && \
-
-	# Ensure appuser ownership of their home directory
-	chown -R appuser:appuser /home/appuser
-
-CMD ["cron", "-f"]
+# START
+ENTRYPOINT ["/entrypoint.sh"]
