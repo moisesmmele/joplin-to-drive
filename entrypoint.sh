@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# JOPLIN-TO-DRIVE ENTRYPOINT SCRIPT v.1
+# JOPLIN-TO-DRIVE ENTRYPOINT SCRIPT v1.1
 
 #check if cron file is mounted
 if [ -f /scripts/joplin-cron ]; then
@@ -18,6 +18,9 @@ fi
 
 # Ensure permissions for the appuser on config directories
 chown -R appuser:appuser /config /export /home/appuser
+
+# dump env vars and append to /etc/env (so it can be accessed by cron)
+printenv | grep -v "no_proxy" >> /etc/environment
 
 # check for command arguments and start cron
 if [ "\$#" -eq 0 ]; then

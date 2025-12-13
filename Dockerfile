@@ -19,7 +19,7 @@ RUN apt-get update && \
 RUN npm install -g joplin --unsafe-perm=true --allow-root
 
 # add user
-RUN useradd -d 1000 -m -s /bin/bash appuser
+RUN useradd -u 1000 -m -s /bin/bash appuser
 
 # Setup directories
 RUN \	
