@@ -26,9 +26,8 @@ RUN \
 	# create directories
 	mkdir -p /config/joplin /config/rclone /export /scripts /var/log && \
 	# set proper dir ownership
-	chown -R appuser:appuser /config /export /scripts /var/log && \
+	chown -R appuser:appuser /config /export /scripts /var/log
 	
-
 # Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
 

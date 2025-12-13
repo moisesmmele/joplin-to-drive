@@ -15,7 +15,7 @@ services:
 
       # 2. Configs (State)
       # We mount rclone.conf as read-write so rclone can update tokens
-      - ./config/rclone.conf:/appuser/.config/rclone/rclone.conf
+      - ./config/rclone.conf:/home/appuser/.config/rclone/rclone.conf
       # Persist Joplin's local database so we don't re-download everything every time
       - joplin_data:/home/appuser/.config/joplin
 
