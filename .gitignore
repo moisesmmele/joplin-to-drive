@@ -22,3 +22,4 @@ tmp/
 # --- Node/Docker Garbage ---
 node_modules/
 npm-debug.log
+docker-build.log

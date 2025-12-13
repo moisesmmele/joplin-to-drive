@@ -9,9 +9,15 @@ RUN apt-get update && \
 	unzip \
 	cron \
 	ca-certificates\
-	nodejs \
-	npm \
 	rclone && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/*
+
+# Fetch and execute NodeSource script for node 24 (likely adds an apt source?)
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash -
+
+# Download updated node from the recently added apt source
+RUN apt-get install -y nodejs && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 

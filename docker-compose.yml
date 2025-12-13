@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   joplin-sync:
     build: .
@@ -10,8 +8,8 @@ services:
     user: root
     volumes:
       # 1. Scripts (Logic)
-      - ./scripts/joplin-export.sh:/scripts/joplin-export.sh:ro
-      - ./scripts/joplin-cron:/scripts/joplin-cron:ro
+      - ./joplin-export.sh:/scripts/joplin-export.sh:ro
+      - ./joplin-cron:/scripts/joplin-cron:ro
 
       # 2. Configs (State)
       # We mount rclone.conf as read-write so rclone can update tokens
