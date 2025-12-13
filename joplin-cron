@@ -1,0 +1,2 @@
+# m h dom mon dow user command
+*/5 * * * * appuser /scripts/joplin-export.sh >> /var/log/cron.log 2>&1
