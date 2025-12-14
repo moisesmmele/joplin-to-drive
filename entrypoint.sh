@@ -3,6 +3,8 @@ set -e
 
 # JOPLIN-TO-DRIVE ENTRYPOINT SCRIPT v1.2
 
+echo "[$(date)] Starting entrypoint..."
+
 #check if cron file is mounted
 if [ -f /scripts/joplin-cron ]; then
 
@@ -34,10 +36,10 @@ chmod +x /scripts/joplin-export.sh
 
 # Run export once on container start
 if [ -x /scripts/joplin-export.sh ]; then
-    echo "Running initial Joplin export..."
+    echo "[$(date)] Running initial Joplin export..."
     runuser -u appuser -- /scripts/joplin-export.sh
 fi
 
 # Start cron
-echo "Starting cron..."
+echo "[$(date)] Starting cron..."
 exec cron -f

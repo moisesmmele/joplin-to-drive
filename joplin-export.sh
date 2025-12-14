@@ -1,12 +1,14 @@
 #!/bin/bash
 
-# JOPLIN EXPORT AND SYNC SCRIPT v1.1
+# JOPLIN EXPORT AND SYNC SCRIPT v1.3
+echo "[$(date)] Initializing Jopling Export and Sync script..."
 
 set -euo pipefail
 
 # --- Configuration (Defaults provided, overrides via ENV) ---
+
 # Joplin
-TARGET_ID="${JOPLIN_SYNC_TARGET_ID:-9}" # 9 is standard for Joplin Server
+TARGET_ID="${JOPLIN_SYNC_TARGET_ID:-}"
 JOPLIN_URL="${JOPLIN_SERVER_URL:-}"
 JOPLIN_USER="${JOPLIN_SERVER_EMAIL:-}"
 JOPLIN_PASS="${JOPLIN_SERVER_PASSWORD:-}"
@@ -24,7 +26,7 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${HOME:-/home/appuser}
 export HOME="${HOME:-/home/appuser}"
 
 exec 200>"$LOCKFILE"
-flock -n 200 || { echo "Sync already in progress. Skipping."; exit 0; }
+flock -n 200 || { echo "[$(date)] Sync already in progress. Skipping."; exit 0; }
 trap 'rm -f "$LOCKFILE"' EXIT
 
 if [ -z "$JOPLIN_URL" ]; then
@@ -33,18 +35,26 @@ if [ -z "$JOPLIN_URL" ]; then
 fi
 
 # --- 1. Configure Joplin (Idempotent) ---
-CURRENT_TARGET="$(joplin config sync.target 2>/dev/null || echo "0")"
 
-if [[ "$CURRENT_TARGET" != "$TARGET_ID" ]]; then
+# check if sync.target key in config export is already set;
+# if not set, config with avalable env vars
+JOPLIN_CONFIG="$(joplin config --export)"
+if ! echo "$JOPLIN_CONFIG" | grep -q "\"sync.target\": $TARGET_ID"; then
     echo "[$(date)] Configuring Joplin CLI..."
 
-	echo "checkpoint to see if this is running every cron iteration"
+    # Safety check for target id
+    if [ -z "$TARGET_ID" ]; then
+        echo "ERROR: TARGET_ID is not set."
+        exit 1
+    fi
 
     joplin config sync.target "$TARGET_ID"
     joplin config "sync.$TARGET_ID.path" "$JOPLIN_URL"
     joplin config "sync.$TARGET_ID.username" "$JOPLIN_USER"
     joplin config "sync.$TARGET_ID.password" "$JOPLIN_PASS"
     joplin config encryption.enabled false
+else
+    echo "[$(date)] Joplin is already configured."
 fi
 
 # --- 2. Sync & Export ---
