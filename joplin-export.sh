@@ -36,7 +36,10 @@ fi
 CURRENT_TARGET="$(joplin config sync.target 2>/dev/null || echo "0")"
 
 if [[ "$CURRENT_TARGET" != "$TARGET_ID" ]]; then
-    echo "Configuring Joplin CLI..."
+    echo "[$(date)] Configuring Joplin CLI..."
+
+	echo "checkpoint to see if this is running every cron iteration"
+
     joplin config sync.target "$TARGET_ID"
     joplin config "sync.$TARGET_ID.path" "$JOPLIN_URL"
     joplin config "sync.$TARGET_ID.username" "$JOPLIN_USER"
@@ -46,7 +49,7 @@ fi
 
 # --- 2. Sync & Export ---
 echo "[$(date)] 1/3: Syncing Joplin from Server..."
-joplin sync
+joplin sync > /dev/null
 
 echo "[$(date)] 2/3: Exporting to Markdown..."
 # Clean export dir safely
@@ -63,6 +66,6 @@ if ! rclone listremotes | grep -q "^${REMOTE_NAME}:"; then
 fi
 
 rclone sync "$EXPORT_DIR" "$REMOTE_NAME:$DEST_PATH" \
-    --checksum --delete-excluded --progress
+    --checksum --delete-excluded
 
 echo "[$(date)] Job Complete."

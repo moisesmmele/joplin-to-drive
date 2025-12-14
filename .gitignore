@@ -1,6 +1,9 @@
+
 # --- Secrets & Configuration ---
 .env
+config/*
 config/rclone.conf
+config/rclone.conf.old
 
 # --- Data & Exports ---
 # Ignore the local export folder if you ever mount it for debugging
