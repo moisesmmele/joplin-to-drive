@@ -1,3 +1,1 @@
-# m h dom mon dow user command
-# runs every 5 minutes, as app user. Redirects the output to Docker stdout/err
-*/5 * * * * appuser /scripts/joplin-export.sh > /proc/1/fd/1 2>&1
+*/2 * * * * appuser /scripts/joplin-export.sh >> /var/log/joplin-sync.log 2>&1

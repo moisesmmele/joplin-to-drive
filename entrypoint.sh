@@ -16,6 +16,15 @@ fi
 # Ensure permissions for the appuser on config directories
 chown -R appuser:appuser /config /export /home/appuser
 
+# Create a new file for log output redirect
+touch /var/log/joplin-sync.log
+
+# change log file ownership to appuser
+chown appuser:appuser /var/log/joplin-sync.log
+
+# sends log tail output to file
+tail -f /var/log/joplin-sync.log &
+
 # dump env vars and append to /etc/env (so it can be accessed by cron)
 printenv | grep -v "no_proxy" > /etc/environment
 
