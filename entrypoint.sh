@@ -19,6 +19,10 @@ chown -R appuser:appuser /config /export /home/appuser
 # dump env vars and append to /etc/env (so it can be accessed by cron)
 printenv | grep -v "no_proxy" > /etc/environment
 
+# change script exec permissions
+chmod +x /scripts/joplin-export.sh
+
+
 # Run export once on container start
 if [ -x /scripts/joplin-export.sh ]; then
     echo "Running initial Joplin export..."
